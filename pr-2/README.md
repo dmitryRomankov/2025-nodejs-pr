@@ -95,8 +95,8 @@ Useful links:
 
 1. What is the traditional way to handle asynchronous operations in JavaScript?
 2. Explain Promise lifecycle.
-3. Explain `Promise.all`.
-4. Explain `Promise.allSettled`.
+3. Explain `Promise.all()`.
+4. Explain `Promise.allSettled()`.
 5. Explain `Promise.race()`.
 6. Explain `Promise.any()`.
 7. What is `Stream`? Name use-cases to where it can be used.
@@ -105,8 +105,8 @@ Useful links:
 10. Explain `EventEmitter`. How it works?
 11. How Event Loop works in web browsers?
 12. How Event Loop works in Node.js?
-13. Explain `process.nextTick`. At which moment of Event Loop it executes?
-14. Explain `setImmediate`. At which moment of Event Loop it executes?
+13. Explain `process.nextTick()`. At which moment of Event Loop it executes?
+14. Explain `setImmediate()`. At which moment of Event Loop it executes?
 
 ## Evaluation criteria [**Updated**]
 
