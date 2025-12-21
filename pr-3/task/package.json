@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start": "npx tsx useCases/students/server.ts",
+    "migrate": "node migrations/runMigrations.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -10,7 +12,15 @@
   "description": "",
   "type": "module",
   "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mssql": "^12.2.0",
+    "tsx": "^4.21.0"
+  },
+  "devDependencies": {
+    "joi": "^18.0.2",
     "@types/express": "^5.0.6",
-    "express": "^5.2.1"
+    "@types/mssql": "^9.1.8",
+    "ts-node": "^10.9.2"
   }
 }
