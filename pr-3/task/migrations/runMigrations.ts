@@ -17,7 +17,7 @@ if (!connectionString) {
 
 async function run() {
   try {
-    const pool = await new sql.ConnectionPool(connectionString).connect();
+    const pool = await new sql.ConnectionPool(connectionString!).connect();
     const files = fs
       .readdirSync(MIGRATIONS_DIR)
       .filter((f) => f.endsWith('.sql'))
