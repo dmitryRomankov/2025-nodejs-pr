@@ -60,7 +60,7 @@ Guard your endpoint with middleware which will check roles either by reading the
 ## Evaluation criteria
 
 - **Core Functionality**
-  - **4 pts** - Your endpoints are guarded and not blocking any unauthorized access to your resources.
+  - **4 pts** - Your endpoints are guarded and blocking any unauthorized access to your resources.
     - **2 pts** - Endpoints are mostly protected but with some issues.
     - **0 pts** - Missing or broken.
 - **Database Structure Expansion**
