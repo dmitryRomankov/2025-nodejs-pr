@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import { Student } from './entities/students';
+import statusMonitor from 'express-status-monitor';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swagger/swaggerSpec';
 import { saveToJSON, loadJSON } from './utils/common';
 import { BackupManager } from './shared/backup';
 import { StudentsService } from './useCases/students/services/students-service';
@@ -29,18 +31,33 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
+app.use(statusMonitor());
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.use(express.json());
 
 const router = express.Router();
 
-const backupManager = new BackupManager(
-  () => Student.getAllStudents(),
-  60000, // 1 minute interval
-  './backups'
-);
-
 const studentsService = new StudentsService(new DatabaseService());
 const userService = new UserService(new DatabaseService());
+
+const backupManager = new BackupManager(
+  () => {
+    let students: any[] = [];
+    studentsService
+      .getAllStudents()
+      .then((result) => {
+        students = result || [];
+      })
+      .catch(() => {
+        students = [];
+      });
+    return students;
+  },
+  60000, // 1 minute interval
+  './backups',
+);
 
 /**
  * GET /students - Retrieve all students
@@ -56,7 +73,7 @@ router.get(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -82,7 +99,7 @@ router.post(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -102,7 +119,7 @@ router.put(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -119,7 +136,7 @@ router.get(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -137,7 +154,7 @@ router.get(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -159,7 +176,7 @@ router.get(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -176,7 +193,7 @@ router.put(
       const { studentName, age, groupNumber } = req.body;
       const updatedStudent = await studentsService.updateStudent(
         req.params.id,
-        { studentName, age, groupNumber }
+        { studentName, age, groupNumber },
       );
 
       if (!updatedStudent) {
@@ -187,7 +204,7 @@ router.put(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -209,7 +226,7 @@ router.delete(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -227,7 +244,7 @@ router.post(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -244,7 +261,7 @@ router.post(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 /**
@@ -264,7 +281,7 @@ router.post(
     } catch (error) {
       res.status(500).json({ message: 'Failed to start backup', error });
     }
-  }
+  },
 );
 
 /**
@@ -284,7 +301,7 @@ router.post(
     } catch (error) {
       res.status(500).json({ message: 'Failed to stop backup', error });
     }
-  }
+  },
 );
 
 /**
@@ -301,7 +318,7 @@ router.get(
     } catch (error) {
       res.status(500).json({ message: 'Failed to get backup status', error });
     }
-  }
+  },
 );
 
 router.post(
@@ -326,7 +343,7 @@ router.post(
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-  }
+  },
 );
 
 router.post('/user/login', authenticate, async (req, res) => {
@@ -348,5 +365,11 @@ router.post('/user/login', authenticate, async (req, res) => {
 app.use('/api', router);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`\nServer is running on http://localhost:${PORT}`);
+  console.log(
+    `Monitoring dashboard available at http://localhost:${PORT}/status`,
+  );
+  console.log(
+    `API documentation available at http://localhost:${PORT}/api-docs\n`,
+  );
 });

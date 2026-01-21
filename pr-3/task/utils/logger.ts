@@ -1,31 +1,50 @@
-import os from 'os';
+import { logger as winstonLogger } from './winston-logger';
+
+const mapLogOutput = (item: any) => {
+  return typeof item === 'string' ? item : JSON.stringify(item);
+};
 
 export class Logger {
-  #isVerboseModeEnabled = false;
-  #isQuietModeEnabled = false;
+  #verbose = false;
+  #quiet = false;
 
   constructor(verbose = false, quiet = false) {
     const args = process.argv.slice(2);
-    this.#isVerboseModeEnabled = verbose || args.includes('--verbose');
-    this.#isQuietModeEnabled = quiet || args.includes('--quiet');
+    this.#verbose = verbose || args.includes('--verbose');
+    this.#quiet = quiet || args.includes('--quiet');
   }
 
   log(...data: any) {
-    if (this.#isQuietModeEnabled) {
+    if (this.#quiet) {
       return;
     }
 
-    if (this.#isVerboseModeEnabled) {
-      const systemData = {
-        timestamp: new Date().toISOString(),
-        platform: os.platform(),
-        totalMemory: os.totalmem(),
-        freeMemory: os.freemem(),
-        cpuModel: os.cpus()[0].model,
-      };
-      console.log('System Data:', systemData);
-    }
+    const message = data.map(mapLogOutput).join(' ');
 
-    console.log(...data);
+    if (this.#verbose) {
+      winstonLogger.debug(message);
+    } else {
+      winstonLogger.info(message);
+    }
+  }
+
+  error(...data: any) {
+    const message = data.map(mapLogOutput).join(' ');
+    winstonLogger.error(message);
+  }
+
+  warn(...data: any) {
+    const message = data.map(mapLogOutput).join(' ');
+    winstonLogger.warn(message);
+  }
+
+  debug(...data: any) {
+    const message = data.map(mapLogOutput).join(' ');
+    winstonLogger.debug(message);
+  }
+
+  info(...data: any) {
+    const message = data.map(mapLogOutput).join(' ');
+    winstonLogger.info(message);
   }
 }

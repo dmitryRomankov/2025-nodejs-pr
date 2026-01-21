@@ -15,6 +15,10 @@ dist/
 build/
 *.tsbuildinfo
 
+# Logs
+logs/
+*.log
+
 # IDE
 .vscode/
 .idea/
