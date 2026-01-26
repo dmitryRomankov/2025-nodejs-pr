@@ -1,3 +1,4 @@
+import compression from 'compression';
 import dotenv from 'dotenv';
 import express from 'express';
 import statusMonitor from 'express-status-monitor';
@@ -31,6 +32,9 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
+app.use(compression());
+
+app.use('/status', authenticate, requireRole(['admin', 'moderator']));
 app.use(statusMonitor());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -364,12 +368,16 @@ router.post('/user/login', authenticate, async (req, res) => {
 
 app.use('/api', router);
 
-app.listen(PORT, () => {
-  console.log(`\nServer is running on http://localhost:${PORT}`);
-  console.log(
-    `Monitoring dashboard available at http://localhost:${PORT}/status`,
-  );
-  console.log(
-    `API documentation available at http://localhost:${PORT}/api-docs\n`,
-  );
-});
+export { app };
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`\nServer is running on http://localhost:${PORT}`);
+    console.log(
+      `Monitoring dashboard available at http://localhost:${PORT}/status`,
+    );
+    console.log(
+      `API documentation available at http://localhost:${PORT}/api-docs\n`,
+    );
+  });
+}

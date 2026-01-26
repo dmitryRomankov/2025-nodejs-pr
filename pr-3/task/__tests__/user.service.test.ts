@@ -4,9 +4,6 @@ import { User, UserLogin } from '../shared/types';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-process.env.JWT_SECRET = 'test-secret-key';
-process.env.DEFAULT_ROLE_ID = '2';
-
 jest.mock('../shared/db-service');
 jest.mock('bcrypt');
 jest.mock('jsonwebtoken');
@@ -104,7 +101,7 @@ describe('UserService', () => {
     });
   });
 
-  describe('loginUser - Happy Path', () => {
+  describe('loginUser', () => {
     it('should successfully login user and return token', async () => {
       const userLogin = createUserLogin();
       const userRecord = createUserRecord();
@@ -175,7 +172,7 @@ describe('UserService', () => {
           name: 'John',
           surname: 'Doe',
         }),
-        undefined,
+        process.env.JWT_SECRET,
         { expiresIn: '1h' },
       );
     });

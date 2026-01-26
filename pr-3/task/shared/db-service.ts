@@ -19,7 +19,7 @@ export class DatabaseService {
 
       if (!connectionString) {
         throw new Error(
-          'DATABASE_CONNECTION_STRING is not defined in .env file'
+          'DATABASE_CONNECTION_STRING is not defined in .env file',
         );
       }
       this.pool = await new sql.ConnectionPool(connectionString).connect();
